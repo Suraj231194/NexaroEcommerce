@@ -42,8 +42,7 @@ export function useAuth() {
     setMounted(true);
   }, []);
 
-  const demoEnabled =
-    process.env.NEXT_PUBLIC_DEMO_MODE === "true" || process.env.NODE_ENV !== "production";
+  const demoEnabled = true;
   const demoUser = useMemo(() => (mounted && demoEnabled ? readDemoUser() : null), [mounted, demoEnabled]);
 
   const {
