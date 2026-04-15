@@ -9,6 +9,7 @@ import { Input } from "../../components/ui/input.jsx";
 import { Label } from "../../components/ui/label.jsx";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../components/ui/card.jsx";
 import { Progress } from "../../components/ui/progress.jsx";
+import { CheckoutStepper } from "../../components/checkout/CheckoutStepper.jsx";
 import { useToast } from "../../hooks/use-toast.js";
 import { formatCurrency } from "../../lib/formatters.js";
 
@@ -226,11 +227,7 @@ export default function CheckoutPage() {
             </span>
           </div>
           <Progress value={66} className="h-2" />
-          <div className="mt-3 grid grid-cols-3 gap-2 text-xs sm:text-sm">
-            <StepChip label="Cart" complete />
-            <StepChip label="Checkout" active />
-            <StepChip label="Done" />
-          </div>
+          <CheckoutStepper step="checkout" className="mt-3" />
         </div>
 
         <form onSubmit={handleCheckout} className="grid gap-6 lg:grid-cols-[1fr_360px]">
@@ -556,18 +553,4 @@ function SummaryRow({ label, value, strong = false }) {
       <span>{value}</span>
     </div>
   );
-}
-
-function StepChip({ label, active = false, complete = false }) {
-  let classes = "border-border bg-background text-muted-foreground";
-
-  if (active) {
-    classes = "border-primary/30 bg-primary/10 text-primary font-semibold";
-  }
-
-  if (complete) {
-    classes = "border-emerald-500/40 bg-emerald-500/10 text-emerald-700 font-semibold";
-  }
-
-  return <div className={`rounded-full border px-3 py-1.5 text-center ${classes}`}>{label}</div>;
 }

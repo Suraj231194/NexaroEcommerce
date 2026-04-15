@@ -63,7 +63,7 @@ export default function AccountPage() {
                 <a
                   key={item.id}
                   href={`#${item.id}`}
-                  className="flex items-center gap-2 rounded-xl px-3 py-2 text-sm text-muted-foreground transition hover:bg-muted hover:text-foreground"
+                  className="focus-ring flex items-center gap-2 rounded-xl px-3 py-2 text-sm text-muted-foreground transition hover:bg-muted hover:text-foreground"
                 >
                   <item.icon className="h-4 w-4 text-primary" />
                   {item.label}

@@ -1,7 +1,6 @@
 ﻿"use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
-import Link from "next/link";
+import { useEffect, useId, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Clock3, Search, Sparkles, TrendingUp, X } from "lucide-react";
 import { Input } from "../ui/input.jsx";
@@ -32,6 +31,9 @@ export function SearchAutocomplete({
   const router = useRouter();
   const containerRef = useRef(null);
   const inputRef = useRef(null);
+  const uid = useId().replace(/:/g, "");
+  const inputId = `search-autocomplete-input-${uid}`;
+  const listboxId = `search-autocomplete-listbox-${uid}`;
 
   const [query, setQuery] = useState("");
   const [isOpen, setIsOpen] = useState(false);
@@ -96,6 +98,10 @@ export function SearchAutocomplete({
     return [...recentTerms, ...trendingTerms].map((term) => ({ type: "term", value: term }));
   }, [query, recentTerms, suggestions, trendingTerms]);
 
+  useEffect(() => {
+    setHighlightedIndex((current) => (current >= activeItems.length ? -1 : current));
+  }, [activeItems.length]);
+
   const didYouMean = useMemo(() => {
     const value = query.trim().toLowerCase();
     if (!value || suggestions.length > 0 || value.length < 3) {
@@ -141,6 +147,9 @@ export function SearchAutocomplete({
     setIsOpen(false);
     router.push(`/product/${product.slug}`);
   };
+
+  const getOptionId = (index) => `${listboxId}-option-${index}`;
+  const activeDescendantId = highlightedIndex >= 0 ? getOptionId(highlightedIndex) : undefined;
 
   const onKeyDown = (event) => {
     if (!isOpen && (event.key === "ArrowDown" || event.key === "ArrowUp")) {
@@ -203,6 +212,7 @@ export function SearchAutocomplete({
       >
         <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
         <Input
+          id={inputId}
           ref={inputRef}
           type="search"
           value={query}
@@ -222,6 +232,12 @@ export function SearchAutocomplete({
             inputClassName
           )}
           data-testid="input-search-autocomplete"
+          role="combobox"
+          aria-autocomplete="list"
+          aria-expanded={isOpen}
+          aria-controls={listboxId}
+          aria-activedescendant={activeDescendantId}
+          aria-label={placeholder}
         />
         {query.length > 0 && (
           <button
@@ -232,7 +248,7 @@ export function SearchAutocomplete({
               setHighlightedIndex(-1);
               inputRef.current?.focus();
             }}
-            className="absolute right-3 top-1/2 inline-flex h-6 w-6 -translate-y-1/2 items-center justify-center rounded-full text-muted-foreground transition hover:bg-muted hover:text-foreground"
+            className="absolute right-3 top-1/2 inline-flex h-6 w-6 -translate-y-1/2 items-center justify-center rounded-full text-muted-foreground transition hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
             aria-label="Clear search"
           >
             <X className="h-3.5 w-3.5" />
@@ -242,34 +258,14 @@ export function SearchAutocomplete({
 
       {isOpen && (
         <div className="absolute left-0 right-0 top-[calc(100%+0.65rem)] z-40 overflow-hidden rounded-2xl border border-border/90 bg-card/95 shadow-2xl backdrop-blur-xl">
-          <div className="max-h-[26rem] overflow-y-auto p-2">
+          <div
+            className="max-h-[26rem] overflow-y-auto p-2"
+            role="listbox"
+            id={listboxId}
+            aria-label="Search suggestions"
+          >
             {!query.trim() && (
               <>
-                {trendingTerms.length > 0 && (
-                  <>
-                    <div className="px-3 pb-2 pt-1 text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">
-                      Trending
-                    </div>
-                    <div className="mb-3 flex flex-wrap gap-2 px-2">
-                      {trendingTerms.map((term, index) => (
-                        <button
-                          key={term}
-                          type="button"
-                          onMouseEnter={() => setHighlightedIndex(recentTerms.length + index)}
-                          onClick={() => goToSearch(term)}
-                          className={cn(
-                            "inline-flex items-center gap-1 rounded-full border border-border bg-secondary px-3 py-1 text-xs font-medium transition hover:border-primary/30 hover:text-primary",
-                            highlightedIndex === recentTerms.length + index ? "border-primary/40 text-primary" : ""
-                          )}
-                        >
-                          <TrendingUp className="h-3 w-3" />
-                          {term}
-                        </button>
-                      ))}
-                    </div>
-                  </>
-                )}
-
                 {recentTerms.length > 0 && (
                   <>
                     <div className="px-3 pb-2 pt-1 text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">
@@ -283,14 +279,48 @@ export function SearchAutocomplete({
                           onMouseEnter={() => setHighlightedIndex(index)}
                           onClick={() => goToSearch(term)}
                           className={cn(
-                            "flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm transition hover:bg-muted",
+                            "flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm transition hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
                             highlightedIndex === index ? "bg-muted" : ""
                           )}
+                          role="option"
+                          aria-selected={highlightedIndex === index}
+                          id={getOptionId(index)}
                         >
                           <Clock3 className="h-3.5 w-3.5 text-muted-foreground" />
                           {term}
                         </button>
                       ))}
+                    </div>
+                  </>
+                )}
+
+                {trendingTerms.length > 0 && (
+                  <>
+                    <div className="px-3 pb-2 pt-3 text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+                      Trending
+                    </div>
+                    <div className="mb-3 flex flex-wrap gap-2 px-2">
+                      {trendingTerms.map((term, index) => {
+                        const optionIndex = recentTerms.length + index;
+                        return (
+                          <button
+                            key={term}
+                            type="button"
+                            onMouseEnter={() => setHighlightedIndex(optionIndex)}
+                            onClick={() => goToSearch(term)}
+                            className={cn(
+                              "inline-flex items-center gap-1 rounded-full border border-border bg-secondary px-3 py-1 text-xs font-medium transition hover:border-primary/30 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+                              highlightedIndex === optionIndex ? "border-primary/40 text-primary" : ""
+                            )}
+                            role="option"
+                            aria-selected={highlightedIndex === optionIndex}
+                            id={getOptionId(optionIndex)}
+                          >
+                            <TrendingUp className="h-3 w-3" />
+                            {term}
+                          </button>
+                        );
+                      })}
                     </div>
                   </>
                 )}
@@ -303,10 +333,10 @@ export function SearchAutocomplete({
                 {didYouMean && (
                   <button
                     type="button"
-                    className="mt-3 rounded-full border border-border bg-secondary px-3 py-1 text-xs font-medium text-foreground hover:border-primary/40 hover:text-primary"
+                    className="mt-3 rounded-full border border-border bg-secondary px-3 py-1 text-xs font-medium text-foreground hover:border-primary/40 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                     onClick={() => goToSearch(didYouMean)}
                   >
-                    Did you mean "{didYouMean}"?
+                    Did you mean &ldquo;{didYouMean}&rdquo;?
                   </button>
                 )}
               </div>
@@ -319,26 +349,27 @@ export function SearchAutocomplete({
                 </div>
                 <div className="space-y-1 px-1">
                   {suggestions.map((product, index) => (
-                    <Link
+                    <button
                       key={product.id}
-                      href={`/product/${product.slug}`}
+                      type="button"
                       onFocus={() => router.prefetch(`/product/${product.slug}`)}
                       onMouseEnter={() => setHighlightedIndex(index)}
                       onMouseOver={() => router.prefetch(`/product/${product.slug}`)}
-                      onClick={() => {
-                        saveRecentSearch(product.name);
-                        setIsOpen(false);
-                      }}
+                      onClick={() => goToProduct(product)}
                       className={cn(
-                        "flex items-center gap-3 rounded-xl px-3 py-2 transition hover:bg-muted",
+                        "flex w-full items-center gap-3 rounded-xl px-3 py-2 text-left transition hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
                         highlightedIndex === index ? "bg-muted" : ""
                       )}
+                      role="option"
+                      aria-selected={highlightedIndex === index}
+                      id={getOptionId(index)}
                     >
                       <div className="h-12 w-12 overflow-hidden rounded-lg border border-border/70 bg-secondary">
                         <ProgressiveImage
                           src={product.images[0]}
                           alt={product.name}
                           imgClassName="h-full w-full object-cover"
+                          loading="lazy"
                         />
                       </div>
                       <div className="min-w-0 flex-1">
@@ -354,16 +385,16 @@ export function SearchAutocomplete({
                           Top pick
                         </Badge>
                       </div>
-                    </Link>
+                    </button>
                   ))}
                 </div>
                 <div className="px-3 pb-2 pt-3">
                   <button
                     type="button"
                     onClick={() => goToSearch(query)}
-                    className="w-full rounded-lg border border-border/80 bg-secondary px-3 py-2 text-sm font-medium transition hover:border-primary/40 hover:text-primary"
+                    className="w-full rounded-lg border border-border/80 bg-secondary px-3 py-2 text-sm font-medium transition hover:border-primary/40 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                   >
-                    View all results for "{query.trim()}"
+                    View all results for &ldquo;{query.trim()}&rdquo;
                   </button>
                 </div>
               </>

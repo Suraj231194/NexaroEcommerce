@@ -16,7 +16,7 @@ export function SalesHero() {
                     <Button size="lg" variant="secondary" asChild className="text-lg px-8">
                         <Link href="/category/mobile-phones">Shop the Sale</Link>
                     </Button>
-                    <Button size="lg" variant="outline" className="text-lg px-8 bg-transparent border-primary-foreground text-primary-foreground hover:bg-primary-foreground hover:text-primary">
+                    <Button size="lg" variant="outline" asChild className="text-lg px-8 bg-transparent border-primary-foreground text-primary-foreground hover:bg-primary-foreground hover:text-primary">
                         <Link href="#features">Learn More</Link>
                     </Button>
                 </div>

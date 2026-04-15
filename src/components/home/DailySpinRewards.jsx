@@ -6,12 +6,12 @@ import { Button } from "../ui/button.jsx";
 import { useToast } from "../../hooks/use-toast.js";
 
 const SEGMENTS = [
-  { label: "WELCOME10", color: "#16a34a", validCoupon: true },
-  { label: "TRY AGAIN", color: "#334155", validCoupon: false },
-  { label: "FLASH20", color: "#ea580c", validCoupon: true },
-  { label: "FREE SHIP", color: "#0284c7", validCoupon: false },
-  { label: "NEXORA30", color: "#7c3aed", validCoupon: true },
-  { label: "BONUS", color: "#be123c", validCoupon: false },
+  { label: "WELCOME10", color: "hsl(142, 70%, 45%)", validCoupon: true },
+  { label: "TRY AGAIN", color: "hsl(215, 25%, 27%)", validCoupon: false },
+  { label: "FLASH20", color: "hsl(24, 95%, 48%)", validCoupon: true },
+  { label: "FREE SHIP", color: "hsl(199, 89%, 38%)", validCoupon: false },
+  { label: "NEXORA30", color: "hsl(262, 70%, 58%)", validCoupon: true },
+  { label: "BONUS", color: "hsl(346, 84%, 41%)", validCoupon: false },
 ];
 
 const SEGMENT_ANGLE = 360 / SEGMENTS.length;
@@ -95,7 +95,7 @@ export function DailySpinRewards({ onCouponUnlock }) {
                 <div
                   className={`mt-4 inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-sm font-medium ${
                     selected.validCoupon
-                      ? "border border-emerald-500/30 bg-emerald-500/10 text-emerald-700"
+                      ? "border border-emerald-500/30 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
                       : "border border-border bg-secondary text-muted-foreground"
                   }`}
                 >

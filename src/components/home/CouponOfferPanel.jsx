@@ -89,7 +89,7 @@ export function CouponOfferPanel({ prefillCode = "" }) {
               </div>
 
               {status === "applied" && applied && (
-                <div className="mt-4 inline-flex items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1.5 text-sm font-medium text-emerald-700">
+                <div className="mt-4 inline-flex items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1.5 text-sm font-medium text-emerald-600 dark:text-emerald-400">
                   <CheckCircle2 className="h-4 w-4" />
                   Offer applied: {applied.code} - You saved {formatCurrency(savings)}
                 </div>
@@ -124,7 +124,7 @@ export function CouponOfferPanel({ prefillCode = "" }) {
                 </div>
                 <div className="flex items-center justify-between rounded-xl border border-border/70 bg-background/80 px-3 py-2 text-sm">
                   <span className="text-muted-foreground">Estimated savings</span>
-                  <span className="font-semibold text-emerald-600">
+                  <span className="font-semibold text-emerald-600 dark:text-emerald-400">
                     {applied ? formatCurrency(savings) : "Apply code"}
                   </span>
                 </div>

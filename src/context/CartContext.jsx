@@ -13,7 +13,14 @@ export function CartProvider({ children }) {
     if (typeof window !== "undefined") {
       const saved = localStorage.getItem(CART_STORAGE_KEY);
       if (saved) {
-        setItems(JSON.parse(saved));
+        try {
+          const parsed = JSON.parse(saved);
+          if (Array.isArray(parsed)) {
+            setItems(parsed);
+          }
+        } catch (error) {
+          localStorage.removeItem(CART_STORAGE_KEY);
+        }
       }
       setIsInitialized(true);
     }

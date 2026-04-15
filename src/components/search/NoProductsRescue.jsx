@@ -48,10 +48,10 @@ export function NoProductsRescue({ query, onClearFilters }) {
           <Link
             key={term}
             href={`/search?q=${encodeURIComponent(term)}`}
-            className="inline-flex items-center gap-1 rounded-full border border-border/80 bg-background px-3 py-1 text-xs font-medium text-muted-foreground transition hover:border-primary/40 hover:text-primary"
+            className="focus-ring inline-flex items-center gap-1 rounded-full border border-border/80 bg-background px-3 py-1 text-xs font-medium text-muted-foreground transition hover:border-primary/40 hover:text-primary"
           >
             <Compass className="h-3.5 w-3.5" />
-            Did you mean "{term}"?
+            Did you mean &ldquo;{term}&rdquo;?
           </Link>
         ))}
       </div>
@@ -59,14 +59,14 @@ export function NoProductsRescue({ query, onClearFilters }) {
       <div className="mt-3 flex flex-wrap gap-2">
         <Link
           href="/search?q=trending"
-          className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary"
+          className="focus-ring inline-flex items-center gap-1 rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary"
         >
           <TrendingUp className="h-3.5 w-3.5" />
           Popular alternatives
         </Link>
         <Link
           href="/search?q=deals"
-          className="inline-flex items-center gap-1 rounded-full bg-amber-500/10 px-3 py-1 text-xs font-semibold text-amber-700"
+          className="focus-ring inline-flex items-center gap-1 rounded-full bg-amber-500/10 px-3 py-1 text-xs font-semibold text-amber-700"
         >
           <Sparkles className="h-3.5 w-3.5" />
           Deals of the day
@@ -75,4 +75,3 @@ export function NoProductsRescue({ query, onClearFilters }) {
     </div>
   );
 }
-

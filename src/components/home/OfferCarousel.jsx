@@ -12,6 +12,7 @@ import { Button } from "../ui/button.jsx";
 import { Progress } from "../ui/progress.jsx";
 import { SectionHeading } from "./SectionHeading.jsx";
 import { formatCurrency, getDiscountPercent } from "../../lib/formatters.js";
+import { ProgressiveImage } from "../ui/progressive-image.jsx";
 
 function getClaimPercent(productId) {
   return 48 + (productId % 42);
@@ -42,32 +43,32 @@ export function OfferCarousel({ products = [] }) {
                   key={product.id}
                   className="basis-[86%] pl-3 sm:basis-[56%] lg:basis-[41%] xl:basis-[33%]"
                 >
-                  <Link
-                    href={`/product/${product.slug}`}
-                    className="group block overflow-hidden rounded-2xl border border-border/80 bg-card shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-xl"
-                  >
-                    <div className="relative aspect-[16/9] overflow-hidden">
-                      <img
-                        src={product.images[0]}
-                        alt={product.name}
-                        className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/15 to-transparent" />
-                      <div className="absolute left-3 top-3 flex flex-wrap gap-2">
-                        <Badge className="bg-destructive text-destructive-foreground">
-                          <Percent className="h-3 w-3" />
-                          {discount}% off
-                        </Badge>
-                        <Badge className="bg-amber-500/95 text-black">
-                          <Zap className="h-3 w-3" />
-                          Coupon {couponCode}
-                        </Badge>
+                  <article className="group overflow-hidden rounded-2xl border border-border/80 bg-card shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-xl">
+                    <Link href={`/product/${product.slug}`} className="block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
+                      <div className="relative aspect-[16/9] overflow-hidden">
+                        <ProgressiveImage
+                          src={product.images[0]}
+                          alt={product.name}
+                          loading="lazy"
+                          imgClassName="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/15 to-transparent" />
+                        <div className="absolute left-3 top-3 flex flex-wrap gap-2">
+                          <Badge className="bg-destructive text-destructive-foreground">
+                            <Percent className="h-3 w-3" />
+                            {discount}% off
+                          </Badge>
+                          <Badge className="bg-amber-500/95 text-black">
+                            <Zap className="h-3 w-3" />
+                            Coupon {couponCode}
+                          </Badge>
+                        </div>
+                        <div className="absolute inset-x-0 bottom-0 p-3 text-white">
+                          <p className="line-clamp-1 text-base font-semibold">{product.name}</p>
+                          <p className="text-xs text-white/85">Offer valid until midnight</p>
+                        </div>
                       </div>
-                      <div className="absolute inset-x-0 bottom-0 p-3 text-white">
-                        <p className="line-clamp-1 text-base font-semibold">{product.name}</p>
-                        <p className="text-xs text-white/85">Offer valid until midnight</p>
-                      </div>
-                    </div>
+                    </Link>
 
                     <div className="p-4">
                       <div className="flex items-baseline justify-between gap-3">
@@ -87,12 +88,14 @@ export function OfferCarousel({ products = [] }) {
                         <Progress value={claimed} className="h-2" />
                       </div>
 
-                      <Button className="mt-4 w-full rounded-lg">
-                        Grab this offer
-                        <ArrowRight className="h-4 w-4" />
+                      <Button asChild className="mt-4 w-full rounded-lg">
+                        <Link href={`/product/${product.slug}`}>
+                          Grab this offer
+                          <ArrowRight className="h-4 w-4" />
+                        </Link>
                       </Button>
                     </div>
-                  </Link>
+                  </article>
                 </CarouselItem>
               );
             })}
@@ -105,4 +108,3 @@ export function OfferCarousel({ products = [] }) {
     </section>
   );
 }
-

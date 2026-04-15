@@ -46,7 +46,7 @@ export function GlobalCommandPalette() {
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="fixed bottom-20 left-4 z-40 hidden items-center gap-2 rounded-full border border-border/70 bg-background/95 px-3 py-2 text-xs text-muted-foreground shadow-lg backdrop-blur transition hover:border-primary/30 hover:text-primary lg:inline-flex"
+        className="focus-ring fixed bottom-20 left-4 z-40 hidden items-center gap-2 rounded-full border border-border/70 bg-background/95 px-3 py-2 text-xs text-muted-foreground shadow-lg backdrop-blur transition hover:border-primary/30 hover:text-primary lg:inline-flex"
         aria-label="Open search command palette"
       >
         <Search className="h-3.5 w-3.5" />

@@ -2,9 +2,10 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { ArrowRight, Clock3, Percent, Star } from "lucide-react";
+import { ArrowRight, CheckCircle2, Clock3, Percent, Star } from "lucide-react";
 import { Button } from "../components/ui/button.jsx";
 import { Badge } from "../components/ui/badge.jsx";
+import { Input } from "../components/ui/input.jsx";
 import { HomeHero } from "../components/home/HomeHero.jsx";
 import { CategoryShowcase } from "../components/home/CategoryShowcase.jsx";
 import { ProductRail } from "../components/home/ProductRail.jsx";
@@ -15,10 +16,12 @@ import { SmartShoppingModes } from "../components/home/SmartShoppingModes.jsx";
 import { DailySpinRewards } from "../components/home/DailySpinRewards.jsx";
 import { SectionHeading } from "../components/home/SectionHeading.jsx";
 import { TrustHighlights } from "../components/home/TrustHighlights.jsx";
+import { ProgressiveImage } from "../components/ui/progressive-image.jsx";
 import { allProducts } from "../data/products.js";
 import { formatCurrency, getDiscountPercent } from "../lib/formatters.js";
 import { readRecentlyViewed } from "../lib/recentlyViewed.js";
 import { useWishlist } from "../context/WishlistContext.jsx";
+import { useToast } from "../hooks/use-toast.js";
 
 const bestSellers = [...allProducts]
   .sort((a, b) => b.reviewCount - a.reviewCount)
@@ -37,9 +40,14 @@ const deals = [...allProducts]
   .slice(0, 12);
 
 export default function Home() {
+  const { toast } = useToast();
   const [recentlyViewed, setRecentlyViewed] = useState([]);
   const [shoppingMode, setShoppingMode] = useState("all");
   const [spinCouponCode, setSpinCouponCode] = useState("");
+  const [newsletterEmail, setNewsletterEmail] = useState("");
+  const [isSubscribing, setIsSubscribing] = useState(false);
+  const [hasSubscribed, setHasSubscribed] = useState(false);
+  const [isLoadingProducts, setIsLoadingProducts] = useState(true);
   const { items: wishlistItems } = useWishlist();
 
   const wishlistProducts = useMemo(() => {
@@ -54,10 +62,13 @@ export default function Home() {
 
   useEffect(() => {
     const ids = readRecentlyViewed();
-    if (!ids.length) {
-      return;
+    if (ids.length) {
+      setRecentlyViewed(allProducts.filter((product) => ids.includes(product.id)).slice(0, 12));
     }
-    setRecentlyViewed(allProducts.filter((product) => ids.includes(product.id)).slice(0, 12));
+    
+    // Simulate premium loading feel
+    const timer = setTimeout(() => setIsLoadingProducts(false), 1200);
+    return () => clearTimeout(timer);
   }, []);
 
   const visibleBestSellers = useMemo(
@@ -90,12 +101,24 @@ export default function Home() {
 
   return (
     <div className="pb-12">
-      <TopPromoStrip />
-      <HomeHero />
-      <SmartShoppingModes mode={shoppingMode} onModeChange={setShoppingMode} counts={modeCounts} />
-      <OfferCarousel products={visibleDeals.slice(0, 10)} />
-      <DailySpinRewards onCouponUnlock={setSpinCouponCode} />
-      <CouponOfferPanel prefillCode={spinCouponCode} />
+      <div className="animate-entrance stagger-1">
+        <TopPromoStrip />
+      </div>
+      <div className="animate-entrance stagger-2">
+        <HomeHero />
+      </div>
+      <div className="animate-fade stagger-3">
+        <SmartShoppingModes mode={shoppingMode} onModeChange={setShoppingMode} counts={modeCounts} />
+      </div>
+      <div className="animate-entrance stagger-4">
+        <OfferCarousel products={visibleDeals.slice(0, 10)} />
+      </div>
+      <div className="animate-entrance stagger-5">
+        <DailySpinRewards onCouponUnlock={setSpinCouponCode} />
+      </div>
+      <div className="animate-fade stagger-6">
+        <CouponOfferPanel prefillCode={spinCouponCode} />
+      </div>
 
       {modeCounts.visible === 0 && (
         <section className="pt-4">
@@ -114,6 +137,7 @@ export default function Home() {
         description={getModeDescription(shoppingMode, "Most loved products customers keep coming back for.")}
         products={visibleBestSellers}
         query="best sellers"
+        isLoading={isLoadingProducts}
       />
 
       <ProductRail
@@ -121,6 +145,7 @@ export default function Home() {
         description={getModeDescription(shoppingMode, "Hot picks based on ratings, reviews and demand.")}
         products={visibleTrending}
         query="trending"
+        isLoading={isLoadingProducts}
       />
 
       <section className="py-12">
@@ -140,26 +165,37 @@ export default function Home() {
             {visibleDealCards.map((product) => {
               const discount = getDiscountPercent(product.price, product.discountPrice);
               return (
-                <Link
+                <article
                   key={product.id}
-                  href={`/product/${product.slug}`}
                   className="group surface-card-strong overflow-hidden transition duration-300 hover:-translate-y-1"
                 >
-                  <div className="relative aspect-[4/3] overflow-hidden">
-                    <img
-                      src={product.images[0]}
-                      alt={product.name}
-                      className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
-                    />
-                    <div className="absolute left-3 top-3">
-                      <Badge className="bg-destructive text-destructive-foreground">
-                        <Percent className="h-3 w-3" />
-                        {discount}% off
-                      </Badge>
+                  <Link
+                    href={`/product/${product.slug}`}
+                    className="block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                    aria-label={`Open deal for ${product.name}`}
+                  >
+                    <div className="relative aspect-[4/3] overflow-hidden">
+                      <ProgressiveImage
+                        src={product.images[0]}
+                        alt={product.name}
+                        loading="lazy"
+                        imgClassName="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+                      />
+                      <div className="absolute left-3 top-3">
+                        <Badge className="bg-destructive text-destructive-foreground">
+                          <Percent className="h-3 w-3" />
+                          {discount}% off
+                        </Badge>
+                      </div>
                     </div>
-                  </div>
+                  </Link>
                   <div className="p-4">
-                    <p className="line-clamp-2 text-sm font-semibold">{product.name}</p>
+                    <Link
+                      href={`/product/${product.slug}`}
+                      className="block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                    >
+                      <p className="line-clamp-2 text-sm font-semibold hover:text-primary">{product.name}</p>
+                    </Link>
                     <div className="mt-3 flex items-baseline gap-2">
                       <span className="text-lg font-semibold text-primary">
                         {formatCurrency(product.discountPrice)}
@@ -169,13 +205,14 @@ export default function Home() {
                       </span>
                     </div>
                     <Button
+                      asChild
                       variant="outline"
                       className="mt-4 w-full rounded-lg border-primary/20 bg-background group-hover:border-primary/40"
                     >
-                      View deal
+                      <Link href={`/product/${product.slug}`}>View deal</Link>
                     </Button>
                   </div>
-                </Link>
+                </article>
               );
             })}
           </div>
@@ -190,6 +227,7 @@ export default function Home() {
         )}
         products={visibleDeals}
         query="deals"
+        isLoading={isLoadingProducts}
       />
 
       {visibleWishlistProducts.length > 0 && (
@@ -239,7 +277,7 @@ export default function Home() {
                     <Star key={`${item.name}-${index}`} className="h-4 w-4 fill-current" />
                   ))}
                 </div>
-                <p className="text-sm text-muted-foreground">"{item.text}"</p>
+                <p className="text-sm text-muted-foreground">&ldquo;{item.text}&rdquo;</p>
                 <p className="mt-3 text-sm font-semibold">{item.name}</p>
               </article>
             ))}
@@ -257,18 +295,68 @@ export default function Home() {
             <p className="mx-auto mt-2 max-w-2xl text-sm text-muted-foreground md:text-base">
               Be first to know about flash sales and premium product drops.
             </p>
-            <form className="mx-auto mt-5 flex max-w-xl flex-col gap-3 sm:flex-row">
-              <input
-                type="email"
-                placeholder="Enter your email"
-                className="h-11 flex-1 rounded-full border border-border bg-background px-4 text-sm shadow-sm outline-none transition focus:border-primary/40 focus:ring-2 focus:ring-primary/20"
-                data-testid="input-newsletter"
-              />
-              <Button className="h-11 rounded-full px-6" data-testid="button-subscribe">
-                Subscribe
-                <ArrowRight className="h-4 w-4" />
+            <form
+              className="mx-auto mt-5 flex max-w-xl flex-col gap-3 sm:flex-row"
+              onSubmit={(event) => {
+                event.preventDefault();
+                const email = newsletterEmail.trim();
+                if (!email) return;
+                
+                setIsSubscribing(true);
+                // Simulate API call
+                setTimeout(() => {
+                  toast({
+                    title: "Subscribed",
+                    description: "You will now receive launch offers and flash sale alerts.",
+                  });
+                  setNewsletterEmail("");
+                  setIsSubscribing(false);
+                  setHasSubscribed(true);
+                }, 800);
+              }}
+            >
+              <label htmlFor="newsletter-email" className="sr-only">
+                Email address
+              </label>
+              <div className="relative flex-1">
+                <Input
+                  id="newsletter-email"
+                  type="email"
+                  autoComplete="email"
+                  required
+                  disabled={isSubscribing || hasSubscribed}
+                  value={newsletterEmail}
+                  onChange={(event) => setNewsletterEmail(event.target.value)}
+                  placeholder={hasSubscribed ? "Check your inbox!" : "Enter your email"}
+                  className="h-11 w-full rounded-full pr-12"
+                  data-testid="input-newsletter"
+                />
+                {hasSubscribed && (
+                  <CheckCircle2 className="absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-emerald-500" />
+                )}
+              </div>
+              <Button 
+                className="h-11 rounded-full px-6 min-w-[120px]" 
+                data-testid="button-subscribe"
+                disabled={isSubscribing || hasSubscribed}
+              >
+                {isSubscribing ? (
+                  "..."
+                ) : hasSubscribed ? (
+                  "Saved"
+                ) : (
+                  <>
+                    Subscribe
+                    <ArrowRight className="h-4 w-4" />
+                  </>
+                )}
               </Button>
             </form>
+            {hasSubscribed && (
+              <p className="mt-3 text-xs text-emerald-600 dark:text-emerald-400 font-medium animate-in fade-in slide-in-from-top-1">
+                Successfully joined the Nexora squad!
+              </p>
+            )}
           </div>
         </div>
       </section>

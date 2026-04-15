@@ -247,8 +247,9 @@ export default function ProductPage() {
                   <button
                     type="button"
                     onClick={() => toggleWishlist(product)}
-                    className="absolute right-4 top-4 inline-flex h-9 w-9 items-center justify-center rounded-full border border-border bg-background/90 backdrop-blur"
-                    aria-label="Save to wishlist"
+                    className="focus-ring absolute right-4 top-4 inline-flex h-9 w-9 items-center justify-center rounded-full border border-border bg-background/90 backdrop-blur"
+                    aria-label={isInWishlist(product.id) ? "Remove from wishlist" : "Save to wishlist"}
+                    aria-pressed={isInWishlist(product.id)}
                   >
                     <Heart className={`h-4 w-4 ${isInWishlist(product.id) ? "fill-red-500 text-red-500" : ""}`} />
                   </button>
@@ -256,7 +257,7 @@ export default function ProductPage() {
                   <button
                     type="button"
                     onClick={() => changeImage("prev")}
-                    className="absolute left-3 top-1/2 inline-flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full border border-border bg-background/90 shadow-md backdrop-blur transition hover:bg-background"
+                    className="focus-ring absolute left-3 top-1/2 inline-flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full border border-border bg-background/90 shadow-md backdrop-blur transition hover:bg-background"
                     aria-label="Previous image"
                   >
                     <ChevronLeft className="h-4 w-4" />
@@ -264,7 +265,7 @@ export default function ProductPage() {
                   <button
                     type="button"
                     onClick={() => changeImage("next")}
-                    className="absolute right-3 top-1/2 inline-flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full border border-border bg-background/90 shadow-md backdrop-blur transition hover:bg-background"
+                    className="focus-ring absolute right-3 top-1/2 inline-flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full border border-border bg-background/90 shadow-md backdrop-blur transition hover:bg-background"
                     aria-label="Next image"
                   >
                     <ChevronRight className="h-4 w-4" />
@@ -278,7 +279,7 @@ export default function ProductPage() {
                     key={image}
                     type="button"
                     onClick={() => setSelectedImage(index)}
-                    className={`overflow-hidden rounded-xl border transition ${
+                    className={`focus-ring overflow-hidden rounded-xl border transition ${
                       selectedImage === index ? "border-primary shadow-lg" : "border-border/70"
                     }`}
                   >
@@ -605,4 +606,3 @@ function InfoPill({ icon: Icon, title, subtitle }) {
     </div>
   );
 }
-

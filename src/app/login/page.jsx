@@ -11,7 +11,7 @@ import { Eye, EyeOff } from "lucide-react";
 import { BRAND_NAME } from "../../lib/brand.js";
 export default function Login() {
     const router = useRouter();
-    const { login } = useAuth();
+    const { login, demoEnabled, enableDemo } = useAuth();
     const { toast } = useToast();
     const [loading, setLoading] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
@@ -58,7 +58,7 @@ export default function Login() {
                             <label htmlFor="email" className="text-sm font-medium" data-testid="label-email">
                                 Email Address
                             </label>
-                            <Input id="email" type="email" placeholder="you@example.com" value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} required data-testid="input-email"/>
+                            <Input id="email" type="email" autoComplete="email" placeholder="you@example.com" value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} required data-testid="input-email"/>
                         </div>
 
                         <div className="space-y-2">
@@ -66,8 +66,15 @@ export default function Login() {
                                 Password
                             </label>
                             <div className="relative">
-                                <Input id="password" type={showPassword ? "text" : "password"} placeholder="Enter your password" value={formData.password} onChange={(e) => setFormData({ ...formData, password: e.target.value })} required data-testid="input-password"/>
-                                <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground" data-testid="button-toggle-password">
+                                <Input id="password" type={showPassword ? "text" : "password"} autoComplete="current-password" placeholder="Enter your password" value={formData.password} onChange={(e) => setFormData({ ...formData, password: e.target.value })} required data-testid="input-password"/>
+                                <button
+                                  type="button"
+                                  onClick={() => setShowPassword(!showPassword)}
+                                  className="focus-ring absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                                  data-testid="button-toggle-password"
+                                  aria-label={showPassword ? "Hide password" : "Show password"}
+                                  aria-pressed={showPassword}
+                                >
                                     {showPassword ? <EyeOff className="h-4 w-4"/> : <Eye className="h-4 w-4"/>}
                                 </button>
                             </div>
@@ -78,8 +85,25 @@ export default function Login() {
                         </Button>
                     </form>
 
+                    {demoEnabled && (
+                        <div className="mt-4">
+                            <Button
+                                type="button"
+                                variant="outline"
+                                className="w-full border-white/25 bg-white/5 text-white hover:bg-white/10"
+                                onClick={() => {
+                                    enableDemo();
+                                    toast({ title: "Demo mode enabled", description: "Browsing as a demo user." });
+                                    router.push("/");
+                                }}
+                            >
+                                Bypass login (Demo)
+                            </Button>
+                        </div>
+                    )}
+
                     <div className="mt-6 text-center text-sm">
-                        <span className="text-muted-foreground">Don't have an account? </span>
+                        <span className="text-muted-foreground">Don&apos;t have an account? </span>
                         <Link href="/signup">
                             <span className="text-primary hover:underline cursor-pointer font-medium" data-testid="link-signup">
                                 Sign Up

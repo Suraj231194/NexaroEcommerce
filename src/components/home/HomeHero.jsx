@@ -3,6 +3,7 @@ import { ArrowRight, BadgeCheck, ShoppingBag, Truck, Zap } from "lucide-react";
 import { Button } from "../ui/button.jsx";
 import { Badge } from "../ui/badge.jsx";
 import { SearchAutocomplete } from "../shared/SearchAutocomplete.jsx";
+import { ProgressiveImage } from "../ui/progressive-image.jsx";
 import { categories, allProducts } from "../../data/products.js";
 import { formatCompactNumber } from "../../lib/formatters.js";
 
@@ -78,14 +79,15 @@ export function HomeHero() {
                 <Link
                   key={category.id}
                   href={`/category/${category.slug}`}
-                  className={`group relative overflow-hidden rounded-2xl border border-border/80 bg-card ${
+                  className={`focus-ring group relative overflow-hidden rounded-2xl border border-border/80 bg-card ${
                     index === 0 ? "col-span-2 sm:col-span-1 sm:row-span-2" : ""
                   }`}
                 >
-                  <img
+                  <ProgressiveImage
                     src={category.imageUrl}
                     alt={category.name}
-                    className={`w-full object-cover transition duration-500 group-hover:scale-105 ${
+                    loading={index === 0 ? "eager" : "lazy"}
+                    imgClassName={`w-full object-cover transition duration-500 group-hover:scale-105 ${
                       index === 0 ? "h-[16.5rem] sm:h-full" : "h-40"
                     }`}
                   />

@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
@@ -49,7 +49,8 @@ import { useToast } from "../../hooks/use-toast.js";
 import { SearchAutocomplete } from "../shared/SearchAutocomplete.jsx";
 import { useTheme } from "../../context/ThemeContext.jsx";
 import { cn } from "../../lib/utils.js";
-import { BRAND_NAME, BRAND_SHORT, BRAND_TAGLINE } from "../../lib/brand.js";
+import { BrandLogo } from "../ui/logo.jsx";
+import { BRAND_NAME, BRAND_TAGLINE } from "../../lib/brand.js";
 
 const DESKTOP_CATEGORIES = categories.slice(0, 8);
 const MORE_CATEGORIES = categories.slice(8);
@@ -153,7 +154,13 @@ export function Navbar() {
         <div className={cn("flex items-center gap-3 transition-all", isCompact ? "h-14" : "h-16")}>
           <Sheet>
             <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="md:hidden" data-testid="button-mobile-menu">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="md:hidden"
+                data-testid="button-mobile-menu"
+                aria-label="Open navigation menu"
+              >
                 <Menu className="h-5 w-5" />
               </Button>
             </SheetTrigger>
@@ -161,10 +168,7 @@ export function Navbar() {
               <SheetTitle className="sr-only">Navigation</SheetTitle>
               <div className="flex h-full flex-col bg-gradient-to-b from-background to-secondary/25">
                 <div className="border-b border-border/70 p-5">
-                  <Link href="/" className="inline-flex items-center gap-2 text-xl font-semibold" data-testid="link-logo-mobile">
-                    <LogoMark />
-                    {BRAND_NAME}
-                  </Link>
+                  <BrandLogo showTagline={false} showNameOnMobile data-testid="link-logo-mobile" />
                   <p className="mt-1 text-xs text-muted-foreground">{BRAND_TAGLINE}</p>
                 </div>
 
@@ -249,10 +253,7 @@ export function Navbar() {
             </SheetContent>
           </Sheet>
 
-          <Link href="/" className="inline-flex items-center gap-2" data-testid="link-logo">
-            <LogoMark />
-            <span className="hidden text-xl font-semibold sm:inline">{BRAND_NAME}</span>
-          </Link>
+          <BrandLogo showTagline={false} data-testid="link-logo" />
 
           <div className="hidden flex-1 md:block">
             <SearchAutocomplete />
@@ -268,15 +269,18 @@ export function Navbar() {
             <Search className="h-5 w-5" />
           </Button>
 
-          <Link href="/cart" className="relative" data-testid="button-cart">
+          <div className="relative" data-testid="button-cart">
             <Button
+              asChild
               variant="outline"
               className={cn("h-10 rounded-full px-3 shadow-sm sm:px-4", cartBump ? "cart-bump" : "")}
               data-cart-anchor="true"
               id="navbar-cart-anchor"
             >
-              <ShoppingCart className="h-4 w-4" />
-              <span className="hidden sm:inline">Cart</span>
+              <Link href="/cart" aria-label="Open cart">
+                <ShoppingCart className="h-4 w-4" />
+                <span className="hidden sm:inline">Cart</span>
+              </Link>
             </Button>
             {itemCount > 0 && (
               <Badge
@@ -289,15 +293,18 @@ export function Navbar() {
                 {itemCount > 99 ? "99+" : itemCount}
               </Badge>
             )}
-          </Link>
+          </div>
 
-          <Link href="/wishlist" className="relative hidden md:inline-flex" data-testid="button-wishlist-nav">
+          <div className="relative hidden md:inline-flex" data-testid="button-wishlist-nav">
             <Button
+              asChild
               variant="outline"
               className={cn("h-10 rounded-full px-3 shadow-sm", wishlistBump ? "cart-bump" : "")}
             >
-              <Heart className="h-4 w-4" />
-              <span className="hidden lg:inline">Wishlist</span>
+              <Link href="/wishlist" aria-label="Open wishlist">
+                <Heart className="h-4 w-4" />
+                <span className="hidden lg:inline">Wishlist</span>
+              </Link>
             </Button>
             {wishlistCount > 0 && (
               <Badge
@@ -309,7 +316,7 @@ export function Navbar() {
                 {wishlistCount > 99 ? "99+" : wishlistCount}
               </Badge>
             )}
-          </Link>
+          </div>
 
           <Button
             type="button"
@@ -379,16 +386,13 @@ export function Navbar() {
           )}
         </div>
 
-        <div className="pb-3 md:hidden">
-          <SearchAutocomplete inputClassName="h-10 bg-card" />
-        </div>
       </div>
 
       <div className="hidden border-t border-border/60 bg-card/70 md:block">
         <nav className="container-shell flex items-center gap-2 overflow-x-auto py-2.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button className="inline-flex h-10 shrink-0 items-center gap-1.5 rounded-full border border-border/80 bg-background px-3 text-xs font-semibold shadow-sm transition hover:border-primary/30 hover:text-primary">
+              <button className="focus-ring inline-flex h-10 shrink-0 items-center gap-1.5 rounded-full border border-border/80 bg-background px-3 text-xs font-semibold shadow-sm transition hover:border-primary/30 hover:text-primary">
                 <span className="inline-flex h-6 w-6 items-center justify-center rounded-lg bg-secondary text-primary">
                   <Sparkles className="h-3.5 w-3.5" />
                 </span>
@@ -396,13 +400,13 @@ export function Navbar() {
                 <ChevronDown className="h-3.5 w-3.5" />
               </button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-[44rem] p-3" align="start">
+            <DropdownMenuContent className="w-[44rem] max-w-[calc(100vw-2rem)] p-3" align="start">
               <div className="grid grid-cols-3 gap-2">
                 {categories.map((category) => {
                   const Icon = CATEGORY_ICON_MAP[category.slug] || Sparkles;
                   return (
                     <DropdownMenuItem asChild key={`mega-${category.id}`}>
-                      <Link href={`/category/${category.slug}`} className="flex items-center gap-2 rounded-lg p-2">
+                      <Link href={`/category/${category.slug}`} className="focus-ring flex items-center gap-2 rounded-lg p-2">
                         <span className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-secondary text-primary">
                           <Icon className="h-4 w-4" />
                         </span>
@@ -423,11 +427,12 @@ export function Navbar() {
                 key={category.id}
                 href={`/category/${category.slug}`}
                 className={cn(
-                  "group inline-flex h-10 shrink-0 items-center gap-1.5 rounded-full border px-3 text-xs font-medium whitespace-nowrap transition",
+                  "focus-ring group inline-flex h-10 shrink-0 items-center gap-1.5 rounded-full border px-3 text-xs font-medium whitespace-nowrap transition",
                   isActive
                     ? "border-primary/40 bg-primary/10 text-primary shadow-sm"
                     : "border-transparent bg-transparent text-muted-foreground hover:border-border/80 hover:bg-background hover:text-foreground"
                 )}
+                aria-current={isActive ? "page" : undefined}
                 data-testid={`link-category-desktop-${category.slug}`}
               >
                 <span className="inline-flex h-6 w-6 items-center justify-center rounded-lg bg-secondary text-primary">
@@ -440,8 +445,8 @@ export function Navbar() {
 
           {MORE_CATEGORIES.length > 0 && (
             <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <button className="inline-flex h-10 shrink-0 items-center gap-1.5 rounded-full border border-transparent px-3 text-xs text-muted-foreground transition hover:border-border/80 hover:bg-background hover:text-foreground">
+            <DropdownMenuTrigger asChild>
+                <button className="focus-ring inline-flex h-10 shrink-0 items-center gap-1.5 rounded-full border border-transparent px-3 text-xs text-muted-foreground transition hover:border-border/80 hover:bg-background hover:text-foreground">
                   <span className="inline-flex h-6 w-6 items-center justify-center rounded-lg bg-secondary text-primary">
                     <Sparkles className="h-3.5 w-3.5" />
                   </span>
@@ -461,7 +466,8 @@ export function Navbar() {
 
           <Link
             href="/search"
-            className="inline-flex h-10 shrink-0 items-center gap-1.5 rounded-full border border-border/80 bg-background px-3 text-xs font-semibold text-primary shadow-sm transition hover:border-primary/30"
+            className="focus-ring inline-flex h-10 shrink-0 items-center gap-1.5 rounded-full border border-border/80 bg-background px-3 text-xs font-semibold text-primary shadow-sm transition hover:border-primary/30"
+            aria-current={pathname?.startsWith("/search") ? "page" : undefined}
           >
             <span className="inline-flex h-6 w-6 items-center justify-center rounded-lg bg-primary/10 text-primary">
               <Search className="h-3.5 w-3.5" />
@@ -471,7 +477,8 @@ export function Navbar() {
 
           <Link
             href="/deals"
-            className="inline-flex h-10 shrink-0 items-center gap-1.5 rounded-full border border-destructive/30 bg-destructive/10 px-3 text-xs font-semibold text-destructive transition hover:border-destructive/50"
+            className="focus-ring inline-flex h-10 shrink-0 items-center gap-1.5 rounded-full border border-destructive/30 bg-destructive/10 px-3 text-xs font-semibold text-destructive transition hover:border-destructive/50"
+            aria-current={pathname === "/deals" ? "page" : undefined}
           >
             <span className="inline-flex h-6 w-6 items-center justify-center rounded-lg bg-destructive/15 text-destructive">
               <Sparkles className="h-3.5 w-3.5" />
@@ -481,13 +488,5 @@ export function Navbar() {
         </nav>
       </div>
     </header>
-  );
-}
-
-function LogoMark() {
-  return (
-    <span className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-sky-500 via-blue-600 to-cyan-500 text-sm font-black text-white shadow-lg">
-      {BRAND_SHORT}
-    </span>
   );
 }

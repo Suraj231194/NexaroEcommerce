@@ -1,13 +1,8 @@
 import { Plus_Jakarta_Sans, Fraunces } from "next/font/google";
+import Script from "next/script";
 import { Providers } from "./providers.jsx";
 import "./globals.css";
-import { Navbar } from "../components/layout/Navbar.jsx";
-import { Footer } from "../components/layout/Footer.jsx";
-import { MobileBottomNav } from "../components/layout/MobileBottomNav.jsx";
-import { ShoppingAssistantWidget } from "../components/assistant/ShoppingAssistantWidget.jsx";
-import { PageTransition } from "../components/layout/PageTransition.jsx";
-import { ScrollTopButton } from "../components/layout/ScrollTopButton.jsx";
-import { GlobalCommandPalette } from "../components/layout/GlobalCommandPalette.jsx";
+import { AppChrome } from "../components/layout/AppChrome.jsx";
 import { BRAND_NAME } from "../lib/brand.js";
 
 const bodyFont = Plus_Jakarta_Sans({
@@ -20,25 +15,59 @@ const displayFont = Fraunces({
     variable: "--font-display",
 });
 export const metadata = {
-    title: BRAND_NAME,
-    description: "Premium modern e-commerce platform",
+    title: {
+        default: BRAND_NAME,
+        template: `%s | ${BRAND_NAME}`,
+    },
+    description: "Experience premium electronic and fashion shopping with Nexora. Smart features, elevated design, and same-day delivery.",
+    keywords: ["e-commerce", "premium shopping", "electronics", "fashion", "nextjs", "ecommerce platform"],
+    authors: [{ name: "Nexora Team" }],
+    creator: "Nexora",
+    openGraph: {
+        type: "website",
+        locale: "en_US",
+        url: "https://nexora.shop",
+        title: BRAND_NAME,
+        description: "Smart shopping, elevated.",
+        siteName: BRAND_NAME,
+    },
+    twitter: {
+        card: "summary_large_image",
+        title: BRAND_NAME,
+        description: "Smart shopping, elevated.",
+    },
 };
-export default function RootLayout({ children, }) {
-    return (<html lang="en">
-        <body className={`${bodyFont.variable} ${displayFont.variable}`}>
-            <Providers>
-                <div className="min-h-screen flex flex-col bg-background">
-                    <Navbar />
-                    <main className="flex-1 pb-24 md:pb-0">
-                        <PageTransition>{children}</PageTransition>
-                    </main>
-                    <Footer />
-                    <MobileBottomNav />
-                    <ShoppingAssistantWidget />
-                    <ScrollTopButton />
-                    <GlobalCommandPalette />
-                </div>
-            </Providers>
-        </body>
-    </html>);
+
+export default function RootLayout({ children }) {
+    const themeInitScript = `
+        (function() {
+            try {
+                var theme = localStorage.getItem('nexora_theme');
+                var supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+                if (!theme && supportDarkMode) theme = 'dark';
+                if (!theme) theme = 'light';
+                document.documentElement.classList.add(theme);
+                document.documentElement.style.colorScheme = theme;
+            } catch (e) {}
+        })();
+    `;
+
+    return (
+        <html lang="en" suppressHydrationWarning className={`${bodyFont.variable} ${displayFont.variable}`}>
+            <head>
+                <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
+                <style dangerouslySetInnerHTML={{ 
+                    __html: `
+                        html.dark { background: hsl(222 42% 8%); color: white; }
+                        html.light { background: hsl(36 38% 98%); color: black; }
+                    ` 
+                }} />
+            </head>
+            <body className="antialiased min-h-screen">
+                <Providers>
+                    <AppChrome>{children}</AppChrome>
+                </Providers>
+            </body>
+        </html>
+    );
 }

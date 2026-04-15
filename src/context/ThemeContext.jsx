@@ -1,4 +1,5 @@
 "use client";
+"use client";
 
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
 
@@ -15,7 +16,8 @@ export function ThemeProvider({ children }) {
     }
 
     const stored = window.localStorage.getItem(THEME_STORAGE_KEY);
-    const preferred = stored || "light";
+    const hasDarkClass = document.documentElement.classList.contains("dark");
+    const preferred = stored || (hasDarkClass ? "dark" : "light");
     setTheme(preferred);
     setIsReady(true);
   }, []);

@@ -9,6 +9,9 @@ export function ProgressiveImage({
   className,
   imgClassName,
   placeholderClassName,
+  width,
+  height,
+  loading = "lazy",
   ...props
 }) {
   const [loaded, setLoaded] = useState(false);
@@ -38,6 +41,9 @@ export function ProgressiveImage({
       <img
         src={safeSrc}
         alt={alt}
+        width={width}
+        height={height}
+        loading={loading}
         onLoad={() => setLoaded(true)}
         onError={() => {
           setHasError(true);

@@ -5,6 +5,7 @@ import Image from "next/image";
 import { Minus, Plus, ShoppingBag, ShieldCheck, Trash2, Truck } from "lucide-react";
 import { useCart } from "../../context/CartContext.jsx";
 import { Button } from "../../components/ui/button.jsx";
+import { CheckoutStepper } from "../../components/checkout/CheckoutStepper.jsx";
 import { formatCurrency } from "../../lib/formatters.js";
 
 export default function CartPage() {
@@ -43,11 +44,7 @@ export default function CartPage() {
         <div className="mb-6 rounded-2xl border border-border/70 bg-card p-5">
           <p className="text-xs uppercase tracking-[0.14em] text-muted-foreground">Checkout flow</p>
           <h1 className="mt-1 text-3xl font-semibold md:text-4xl">Shopping cart</h1>
-          <div className="mt-4 grid grid-cols-3 gap-2 text-xs sm:text-sm">
-            <StepChip label="Cart" active />
-            <StepChip label="Address" />
-            <StepChip label="Payment" />
-          </div>
+          <CheckoutStepper step="cart" />
         </div>
 
         <div className="grid gap-6 lg:grid-cols-[1fr_360px]">
@@ -63,6 +60,7 @@ export default function CartPage() {
                       src={item.product.images[0]}
                       alt={item.product.name}
                       fill
+                      sizes="(min-width: 640px) 120px, 100vw"
                       className="object-cover"
                     />
                   ) : (
@@ -81,7 +79,7 @@ export default function CartPage() {
                     <button
                       type="button"
                       onClick={() => removeFromCart(item.product.id)}
-                      className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-border text-muted-foreground transition hover:text-destructive"
+                      className="focus-ring inline-flex h-8 w-8 items-center justify-center rounded-full border border-border text-muted-foreground transition hover:text-destructive"
                       aria-label="Remove item"
                     >
                       <Trash2 className="h-4 w-4" />
@@ -93,7 +91,7 @@ export default function CartPage() {
                       <button
                         type="button"
                         onClick={() => updateQuantity(item.product.id, item.quantity - 1)}
-                        className="inline-flex h-8 w-8 items-center justify-center rounded-full hover:bg-muted"
+                        className="focus-ring inline-flex h-8 w-8 items-center justify-center rounded-full hover:bg-muted"
                         aria-label="Decrease quantity"
                       >
                         <Minus className="h-3.5 w-3.5" />
@@ -102,7 +100,7 @@ export default function CartPage() {
                       <button
                         type="button"
                         onClick={() => updateQuantity(item.product.id, item.quantity + 1)}
-                        className="inline-flex h-8 w-8 items-center justify-center rounded-full hover:bg-muted"
+                        className="focus-ring inline-flex h-8 w-8 items-center justify-center rounded-full hover:bg-muted"
                         aria-label="Increase quantity"
                       >
                         <Plus className="h-3.5 w-3.5" />
@@ -150,20 +148,6 @@ export default function CartPage() {
           </aside>
         </div>
       </div>
-    </div>
-  );
-}
-
-function StepChip({ label, active = false }) {
-  return (
-    <div
-      className={`rounded-full border px-3 py-1.5 text-center ${
-        active
-          ? "border-primary/30 bg-primary/10 font-semibold text-primary"
-          : "border-border bg-background text-muted-foreground"
-      }`}
-    >
-      {label}
     </div>
   );
 }

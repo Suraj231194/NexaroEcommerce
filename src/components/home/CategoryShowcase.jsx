@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { categories } from "../../data/products.js";
 import { SectionHeading } from "./SectionHeading.jsx";
+import { ProgressiveImage } from "../ui/progressive-image.jsx";
 
 const SHOWCASE = categories.slice(0, 8);
 
@@ -18,13 +19,15 @@ export function CategoryShowcase() {
             <Link
               key={category.id}
               href={`/category/${category.slug}`}
-              className="group surface-card overflow-hidden p-3 transition duration-300 hover:-translate-y-1 hover:shadow-lg"
+              className="focus-ring group surface-card overflow-hidden p-3 transition duration-300 hover:-translate-y-1 hover:shadow-lg"
             >
               <div className="mb-3 aspect-[4/3] overflow-hidden rounded-xl">
-                <img
+                <ProgressiveImage
                   src={category.imageUrl}
                   alt={category.name}
-                  className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+                  loading="lazy"
+                  className="h-full w-full"
+                  imgClassName="h-full w-full object-cover transition duration-500 group-hover:scale-105"
                 />
               </div>
               <div className="flex items-center justify-between">

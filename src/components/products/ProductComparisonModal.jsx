@@ -2,6 +2,7 @@
 
 import { Dialog, DialogContent, DialogTitle } from "../ui/dialog.jsx";
 import { formatCurrency } from "../../lib/formatters.js";
+import { ProgressiveImage } from "../ui/progressive-image.jsx";
 
 export function ProductComparisonModal({ open, onOpenChange, products = [] }) {
   if (!products.length) {
@@ -55,10 +56,12 @@ export function ProductComparisonModal({ open, onOpenChange, products = [] }) {
                   {products.map((product) => (
                     <th key={product.id} className="border-r border-border/70 px-4 py-3 text-left last:border-r-0">
                       <div className="flex items-center gap-2">
-                        <img
+                        <ProgressiveImage
                           src={product.images[0]}
                           alt={product.name}
-                          className="h-10 w-10 rounded-lg object-cover"
+                          loading="lazy"
+                          className="h-10 w-10 rounded-lg"
+                          imgClassName="h-10 w-10 rounded-lg object-cover"
                         />
                         <div className="min-w-0">
                           <p className="line-clamp-1 text-sm font-semibold">{product.name}</p>

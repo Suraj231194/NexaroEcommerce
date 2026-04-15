@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { ArrowLeft, X } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import {
   categories,
   filterProducts,
@@ -12,9 +12,9 @@ import {
 } from "../../../data/products.js";
 import { ProductGrid } from "../../../components/products/ProductGrid.jsx";
 import { FilterSidebar } from "../../../components/products/FilterSidebar.jsx";
+import { AppliedFiltersChips } from "../../../components/products/AppliedFiltersChips.jsx";
 import { SortSelect } from "../../../components/products/SortSelect.jsx";
 import { Button } from "../../../components/ui/button.jsx";
-import { formatCurrency } from "../../../lib/formatters.js";
 
 export default function CategoryPage() {
   const params = useParams();
@@ -90,69 +90,12 @@ export default function CategoryPage() {
     filters.maxPrice !== undefined ||
     filters.minRating !== undefined;
 
-  const appliedChips = useMemo(() => {
-    const chips = [];
-
-    (filters.brands || []).forEach((brand) => {
-      chips.push({
-        id: `brand-${brand}`,
-        label: brand,
-        onRemove: () =>
-          setFilters((current) => ({
-            ...current,
-            brands: (current.brands || []).filter((item) => item !== brand),
-          })),
-      });
-    });
-
-    (filters.subcategories || []).forEach((subcategory) => {
-      chips.push({
-        id: `subcategory-${subcategory}`,
-        label: subcategory,
-        onRemove: () =>
-          setFilters((current) => ({
-            ...current,
-            subcategories: (current.subcategories || []).filter((item) => item !== subcategory),
-          })),
-      });
-    });
-
-    if (filters.minRating !== undefined) {
-      chips.push({
-        id: `rating-${filters.minRating}`,
-        label: `${filters.minRating} stars & up`,
-        onRemove: () =>
-          setFilters((current) => ({
-            ...current,
-            minRating: undefined,
-          })),
-      });
-    }
-
-    if (filters.minPrice !== undefined || filters.maxPrice !== undefined) {
-      const min = filters.minPrice ?? priceRange.min;
-      const max = filters.maxPrice ?? priceRange.max;
-      chips.push({
-        id: "price-range",
-        label: `${formatCurrency(min)} - ${formatCurrency(max)}`,
-        onRemove: () =>
-          setFilters((current) => ({
-            ...current,
-            minPrice: undefined,
-            maxPrice: undefined,
-          })),
-      });
-    }
-
-    return chips;
-  }, [filters, priceRange.max, priceRange.min]);
-
   return (
     <div className="pb-12 pt-8">
       <div className="container-shell">
         <div className="mb-6">
           <div className="mb-3 flex items-center gap-2 text-xs uppercase tracking-[0.14em] text-muted-foreground">
-            <Link href="/" className="hover:text-primary">
+            <Link href="/" className="focus-ring hover:text-primary">
               Home
             </Link>
             <span>/</span>
@@ -169,7 +112,7 @@ export default function CategoryPage() {
               <button
                 type="button"
                 onClick={clearSubcategoryChips}
-                className={`rounded-full border px-3 py-1 transition ${
+                className={`focus-ring rounded-full border px-3 py-1 transition ${
                   (filters.subcategories || []).length === 0
                     ? "border-primary/40 bg-primary/10 font-semibold text-primary"
                     : "border-border text-muted-foreground hover:border-primary/30 hover:text-primary"
@@ -182,7 +125,7 @@ export default function CategoryPage() {
                   type="button"
                   key={subcategory}
                   onClick={() => toggleSubcategory(subcategory)}
-                  className={`rounded-full border px-3 py-1 transition ${
+                  className={`focus-ring rounded-full border px-3 py-1 transition ${
                     (filters.subcategories || []).includes(subcategory)
                       ? "border-primary/40 bg-primary/10 font-semibold text-primary"
                       : "border-border text-muted-foreground hover:border-primary/30 hover:text-primary"
@@ -203,26 +146,14 @@ export default function CategoryPage() {
           <SortSelect value={sortBy} onChange={setSortBy} />
         </div>
 
-        {appliedChips.length > 0 && (
-          <div className="mb-4 flex flex-wrap items-center gap-2">
-            {appliedChips.map((chip) => (
-              <button
-                key={chip.id}
-                type="button"
-                onClick={chip.onRemove}
-                className="inline-flex items-center gap-1 rounded-full border border-border/80 bg-background px-3 py-1 text-xs font-medium transition hover:border-primary/40 hover:text-primary"
-              >
-                {chip.label}
-                <X className="h-3.5 w-3.5" />
-              </button>
-            ))}
-            <Button type="button" variant="ghost" size="sm" className="h-7 rounded-full text-xs" onClick={clearFilters}>
-              Clear all
-            </Button>
-          </div>
-        )}
+        <AppliedFiltersChips
+          filters={filters}
+          priceRange={priceRange}
+          onChange={setFilters}
+          onClearAll={clearFilters}
+        />
 
-        <div className="flex gap-6">
+        <div className="flex flex-col gap-6 lg:flex-row">
           <FilterSidebar
             brands={brands}
             subcategories={category.subcategories || []}

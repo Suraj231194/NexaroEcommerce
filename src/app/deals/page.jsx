@@ -6,6 +6,7 @@ import { Bolt, Flame, Percent, Timer } from "lucide-react";
 import { allProducts } from "../../data/products.js";
 import { Badge } from "../../components/ui/badge.jsx";
 import { Button } from "../../components/ui/button.jsx";
+import { ProgressiveImage } from "../../components/ui/progressive-image.jsx";
 import { formatCurrency, getDiscountPercent } from "../../lib/formatters.js";
 
 const END_TIMESTAMP = Date.now() + 1000 * 60 * 60 * 14;
@@ -69,11 +70,12 @@ export default function DealsPage() {
             const sold = 30 + (product.id % 63);
             return (
               <article key={product.id} className="group surface-card overflow-hidden transition duration-300 hover:-translate-y-1 hover:shadow-xl">
-                <Link href={`/product/${product.slug}`} className="block aspect-square overflow-hidden bg-muted/40">
-                  <img
+                <Link href={`/product/${product.slug}`} className="focus-ring block aspect-square overflow-hidden bg-muted/40">
+                  <ProgressiveImage
                     src={product.images[0]}
                     alt={product.name}
-                    className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+                    loading="lazy"
+                    imgClassName="h-full w-full object-cover transition duration-500 group-hover:scale-105"
                   />
                 </Link>
                 <div className="p-4">

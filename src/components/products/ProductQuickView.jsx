@@ -5,6 +5,7 @@ import { ShoppingCart, Star } from "lucide-react";
 import { Button } from "../ui/button.jsx";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "../ui/dialog.jsx";
 import { formatCurrency, getDiscountPercent } from "../../lib/formatters.js";
+import { ProgressiveImage } from "../ui/progressive-image.jsx";
 
 export function ProductQuickView({ product, open, onOpenChange, onAddToCart, inCart }) {
   if (!product) {
@@ -18,10 +19,12 @@ export function ProductQuickView({ product, open, onOpenChange, onAddToCart, inC
       <DialogContent className="max-w-3xl overflow-hidden rounded-2xl border-border/70 p-0">
         <div className="grid gap-0 md:grid-cols-2">
           <div className="relative bg-muted/50">
-            <img
+            <ProgressiveImage
               src={product.images?.[0]}
               alt={product.name}
-              className="h-full min-h-72 w-full object-cover"
+              loading="lazy"
+              className="min-h-72"
+              imgClassName="h-full w-full object-cover"
             />
             {discount > 0 && (
               <span className="absolute left-4 top-4 rounded-full bg-destructive px-3 py-1 text-xs font-semibold text-destructive-foreground">

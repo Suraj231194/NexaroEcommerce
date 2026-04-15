@@ -46,9 +46,10 @@ export function MobileBottomNav() {
                 key={item.href}
                 href={item.href}
                 className={cn(
-                  "relative inline-flex flex-col items-center justify-center gap-1 text-[11px] transition",
+                  "focus-ring relative inline-flex flex-col items-center justify-center gap-1 text-[11px] transition",
                   isActive ? "text-primary" : "text-muted-foreground"
                 )}
+                aria-current={isActive ? "page" : undefined}
               >
                 <item.icon className="h-4 w-4" />
                 {item.href === "/wishlist" && wishlistCount > 0 && (
@@ -66,7 +67,7 @@ export function MobileBottomNav() {
       <Link
         href="/cart"
         className={cn(
-          "fixed bottom-20 right-4 z-50 inline-flex h-14 w-14 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-2xl shadow-primary/30 transition hover:scale-105 md:hidden",
+          "focus-ring fixed bottom-20 right-4 z-50 inline-flex h-14 w-14 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-2xl shadow-primary/30 transition hover:scale-105 md:hidden",
           cartBump ? "cart-bump" : ""
         )}
         data-testid="mobile-floating-cart"

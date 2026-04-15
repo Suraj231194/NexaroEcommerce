@@ -8,7 +8,7 @@ export function PageTransition({ children }) {
   return (
     <div
       key={pathname}
-      className="animate-in fade-in slide-in-from-bottom-1 duration-300"
+      className="animate-in fade-in slide-in-from-bottom-1 duration-300 motion-reduce:animate-none motion-reduce:transition-none"
     >
       {children}
     </div>

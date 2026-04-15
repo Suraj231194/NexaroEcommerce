@@ -9,11 +9,13 @@ import { useCart } from "../../context/CartContext.jsx";
 import { formatCurrency } from "../../lib/formatters.js";
 import { allProducts } from "../../data/products.js";
 import { ProgressiveImage } from "../../components/ui/progressive-image.jsx";
+import { useToast } from "../../hooks/use-toast.js";
 
 export default function WishlistPage() {
   const router = useRouter();
   const { items, removeFromWishlist, clearWishlist } = useWishlist();
   const { addToCart } = useCart();
+  const { toast } = useToast();
 
   const products = items
     .map((item) => allProducts.find((product) => product.id === item.id) || item)
@@ -55,7 +57,16 @@ export default function WishlistPage() {
                   if (typeof window === "undefined") {
                     return;
                   }
-                  await navigator.clipboard.writeText(window.location.href);
+                  try {
+                    await navigator.clipboard.writeText(window.location.href);
+                    toast({ title: "Copied", description: "Wishlist link copied to clipboard." });
+                  } catch (error) {
+                    toast({
+                      title: "Copy failed",
+                      description: "Could not copy link. Please copy from the address bar.",
+                      variant: "destructive",
+                    });
+                  }
                 }}
               >
                 <Share2 className="h-4 w-4" />
@@ -78,6 +89,8 @@ export default function WishlistPage() {
                 href={`/product/${product.slug}`}
                 onMouseEnter={() => router.prefetch(`/product/${product.slug}`)}
                 onFocus={() => router.prefetch(`/product/${product.slug}`)}
+                className="focus-ring-inset block rounded-2xl"
+                aria-label={`Open ${product.name}`}
               >
                 <div className="relative aspect-[4/3] overflow-hidden bg-muted/50">
                   <ProgressiveImage
@@ -92,7 +105,7 @@ export default function WishlistPage() {
               </Link>
               <div className="p-4">
                 <p className="text-xs uppercase tracking-[0.12em] text-muted-foreground">{product.brand}</p>
-                <Link href={`/product/${product.slug}`} className="mt-1 line-clamp-2 block text-sm font-semibold hover:text-primary">
+                <Link href={`/product/${product.slug}`} className="focus-ring mt-1 line-clamp-2 block rounded-md text-sm font-semibold hover:text-primary">
                   {product.name}
                 </Link>
 
@@ -119,6 +132,7 @@ export default function WishlistPage() {
                     variant="outline"
                     className="rounded-lg"
                     onClick={() => removeFromWishlist(product.id)}
+                    aria-label="Remove from wishlist"
                   >
                     <Trash2 className="h-4 w-4" />
                   </Button>

@@ -73,7 +73,7 @@ export function SmartShoppingModes({ mode = "all", onModeChange, counts }) {
                   key={item.id}
                   onClick={() => handleModeChange(item.id)}
                   className={cn(
-                    "rounded-xl border px-3 py-3 text-left transition active:scale-[0.98]",
+                    "focus-ring rounded-xl border px-3 py-3 text-left transition active:scale-[0.98]",
                     isActive
                       ? "border-primary/40 bg-primary/10 text-primary shadow-sm"
                       : "border-border/70 bg-background hover:border-primary/30 hover:text-primary"
@@ -101,4 +101,3 @@ export function SmartShoppingModes({ mode = "all", onModeChange, counts }) {
     </section>
   );
 }
-

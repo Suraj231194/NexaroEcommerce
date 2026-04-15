@@ -71,13 +71,13 @@ export default function Signup() {
                                 <label htmlFor="firstName" className="text-sm font-medium" data-testid="label-firstName">
                                     First Name
                                 </label>
-                                <Input id="firstName" type="text" placeholder="John" value={formData.firstName} onChange={(e) => setFormData({ ...formData, firstName: e.target.value })} data-testid="input-firstName"/>
+                                <Input id="firstName" type="text" autoComplete="given-name" placeholder="John" value={formData.firstName} onChange={(e) => setFormData({ ...formData, firstName: e.target.value })} data-testid="input-firstName"/>
                             </div>
                             <div className="space-y-2">
                                 <label htmlFor="lastName" className="text-sm font-medium" data-testid="label-lastName">
                                     Last Name
                                 </label>
-                                <Input id="lastName" type="text" placeholder="Doe" value={formData.lastName} onChange={(e) => setFormData({ ...formData, lastName: e.target.value })} data-testid="input-lastName"/>
+                                <Input id="lastName" type="text" autoComplete="family-name" placeholder="Doe" value={formData.lastName} onChange={(e) => setFormData({ ...formData, lastName: e.target.value })} data-testid="input-lastName"/>
                             </div>
                         </div>
 
@@ -85,7 +85,7 @@ export default function Signup() {
                             <label htmlFor="email" className="text-sm font-medium" data-testid="label-email">
                                 Email Address
                             </label>
-                            <Input id="email" type="email" placeholder="you@example.com" value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} required data-testid="input-email"/>
+                            <Input id="email" type="email" autoComplete="email" placeholder="you@example.com" value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} required data-testid="input-email"/>
                         </div>
 
                         <div className="space-y-2">
@@ -93,8 +93,15 @@ export default function Signup() {
                                 Password
                             </label>
                             <div className="relative">
-                                <Input id="password" type={showPassword ? "text" : "password"} placeholder="Enter your password" value={formData.password} onChange={(e) => setFormData({ ...formData, password: e.target.value })} required data-testid="input-password"/>
-                                <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground" data-testid="button-toggle-password">
+                                <Input id="password" type={showPassword ? "text" : "password"} autoComplete="new-password" placeholder="Enter your password" value={formData.password} onChange={(e) => setFormData({ ...formData, password: e.target.value })} required data-testid="input-password"/>
+                                <button
+                                  type="button"
+                                  onClick={() => setShowPassword(!showPassword)}
+                                  className="focus-ring absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                                  data-testid="button-toggle-password"
+                                  aria-label={showPassword ? "Hide password" : "Show password"}
+                                  aria-pressed={showPassword}
+                                >
                                     {showPassword ? (<EyeOff className="h-4 w-4"/>) : (<Eye className="h-4 w-4"/>)}
                                 </button>
                             </div>

@@ -1,3 +1,6 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Clock3, ShieldCheck, Sparkles, Truck } from "lucide-react";
 import { Badge } from "../ui/badge.jsx";
@@ -9,6 +12,30 @@ const PROMO_POINTS = [
 ];
 
 export function TopPromoStrip() {
+  const [timeLeft, setTimeLeft] = useState("");
+
+  useEffect(() => {
+    const calculateTimeLeft = () => {
+      const now = new Date();
+      // Target is end of current day
+      const target = new Date(now);
+      target.setHours(23, 59, 59, 999);
+
+      const difference = target.getTime() - now.getTime();
+      if (difference <= 0) return "00:00:00";
+
+      const h = Math.floor(difference / (1000 * 60 * 60));
+      const m = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+      const s = Math.floor((difference % (1000 * 60)) / 1000);
+
+      return [h, m, s].map((v) => String(v).padStart(2, "0")).join(":");
+    };
+
+    setTimeLeft(calculateTimeLeft());
+    const timer = setInterval(() => setTimeLeft(calculateTimeLeft()), 1000);
+    return () => clearInterval(timer);
+  }, []);
+
   return (
     <section className="pt-4 md:pt-6">
       <div className="container-shell">
@@ -22,13 +49,13 @@ export function TopPromoStrip() {
             </div>
 
             <div className="flex items-center gap-3">
-              <span className="inline-flex items-center gap-1 rounded-full bg-background/80 px-2.5 py-1 text-xs font-medium text-muted-foreground">
+              <span className="inline-flex min-w-[90px] items-center gap-1 rounded-full bg-background/80 px-2.5 py-1 text-xs font-medium text-muted-foreground">
                 <Clock3 className="h-3.5 w-3.5 text-primary" />
-                Ends in 07:42:18
+                Ends in {timeLeft || "07:42:18"}
               </span>
               <Link
                 href="/deals"
-                className="rounded-full bg-primary px-3 py-1.5 text-xs font-semibold text-primary-foreground transition hover:opacity-90"
+                className="focus-ring rounded-full bg-primary px-3 py-1.5 text-xs font-semibold text-primary-foreground transition hover:opacity-90"
               >
                 View deals
               </Link>
@@ -51,4 +78,3 @@ export function TopPromoStrip() {
     </section>
   );
 }
-

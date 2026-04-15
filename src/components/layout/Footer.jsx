@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { Facebook, Instagram, Linkedin, Mail, MapPin, Phone, Twitter } from "lucide-react";
-import { BRAND_NAME, BRAND_SHORT, SUPPORT_EMAIL } from "../../lib/brand.js";
+import { BrandLogo } from "../ui/logo.jsx";
+import { BRAND_NAME, SUPPORT_EMAIL } from "../../lib/brand.js";
 
 const footerLinks = {
   Shop: [
@@ -35,10 +36,10 @@ const footerLinks = {
 };
 
 const socialLinks = [
-  { icon: Facebook, label: "Facebook", href: "#" },
-  { icon: Twitter, label: "Twitter", href: "#" },
-  { icon: Instagram, label: "Instagram", href: "#" },
-  { icon: Linkedin, label: "LinkedIn", href: "#" },
+  { icon: Facebook, label: "Facebook", href: "https://facebook.com/nexora" },
+  { icon: Twitter, label: "Twitter", href: "https://twitter.com/nexora" },
+  { icon: Instagram, label: "Instagram", href: "https://instagram.com/nexora" },
+  { icon: Linkedin, label: "LinkedIn", href: "https://linkedin.com/company/nexora" },
 ];
 
 export function Footer() {
@@ -49,28 +50,27 @@ export function Footer() {
       <div className="container-shell py-10 md:py-12">
         <div className="grid gap-8 lg:grid-cols-[1.2fr_1fr_1fr_1fr_1fr]">
           <div>
-            <Link href="/" className="inline-flex items-center gap-2 text-xl font-semibold">
-              <span className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-sky-500 via-blue-600 to-cyan-500 text-sm font-black text-white">
-                {BRAND_SHORT}
-              </span>
-              {BRAND_NAME}
-            </Link>
+            <BrandLogo showTagline={false} showNameOnMobile />
             <p className="mt-3 max-w-xs text-sm text-muted-foreground">
               Premium shopping destination for electronics, fashion, and lifestyle essentials.
             </p>
-            <div className="mt-4 flex gap-2">
-              {socialLinks.map((social) => (
-                <a
-                  key={social.label}
-                  href={social.href}
-                  aria-label={social.label}
-                  className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-border bg-background text-muted-foreground transition hover:text-primary"
-                  data-testid={`link-social-${social.label.toLowerCase()}`}
-                >
-                  <social.icon className="h-4 w-4" />
-                </a>
-              ))}
-            </div>
+            {socialLinks.some((item) => item.href) && (
+              <div className="mt-4 flex gap-2">
+                {socialLinks
+                  .filter((social) => !!social.href)
+                  .map((social) => (
+                    <a
+                      key={social.label}
+                      href={social.href}
+                      aria-label={social.label}
+                      className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-border bg-background text-muted-foreground transition hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                      data-testid={`link-social-${social.label.toLowerCase()}`}
+                    >
+                      <social.icon className="h-4 w-4" />
+                    </a>
+                  ))}
+              </div>
+            )}
           </div>
 
           {Object.entries(footerLinks).map(([title, links]) => (
@@ -81,7 +81,7 @@ export function Footer() {
               <ul className="mt-3 space-y-2.5">
                 {links.map((link) => (
                   <li key={link.label}>
-                    <Link href={link.href} className="text-sm transition hover:text-primary">
+                    <Link href={link.href} className="focus-ring inline-flex rounded-md text-sm transition hover:text-primary">
                       {link.label}
                     </Link>
                   </li>
@@ -119,7 +119,7 @@ function ContactItem({ icon: Icon, label, value, href }) {
 
   if (href) {
     return (
-      <a href={href} className="flex items-start gap-2 rounded-xl p-2 transition hover:bg-muted/60">
+      <a href={href} className="focus-ring flex items-start gap-2 rounded-xl p-2 transition hover:bg-muted/60">
         {content}
       </a>
     );

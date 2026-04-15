@@ -99,7 +99,7 @@ export function FilterSidebar({
       <Separator />
 
       <Collapsible open={openSections.price} onOpenChange={() => toggleSection("price") }>
-        <CollapsibleTrigger className="flex w-full items-center justify-between py-1.5 text-sm font-medium">
+        <CollapsibleTrigger className="focus-ring flex w-full items-center justify-between py-1.5 text-sm font-medium">
           Price range
           {openSections.price ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
         </CollapsibleTrigger>
@@ -126,7 +126,7 @@ export function FilterSidebar({
         <>
           <Separator />
           <Collapsible open={openSections.brands} onOpenChange={() => toggleSection("brands") }>
-            <CollapsibleTrigger className="flex w-full items-center justify-between py-1.5 text-sm font-medium">
+            <CollapsibleTrigger className="focus-ring flex w-full items-center justify-between py-1.5 text-sm font-medium">
               Brand
               {openSections.brands ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
             </CollapsibleTrigger>
@@ -155,7 +155,7 @@ export function FilterSidebar({
             open={openSections.subcategories}
             onOpenChange={() => toggleSection("subcategories")}
           >
-            <CollapsibleTrigger className="flex w-full items-center justify-between py-1.5 text-sm font-medium">
+            <CollapsibleTrigger className="focus-ring flex w-full items-center justify-between py-1.5 text-sm font-medium">
               Subcategory
               {openSections.subcategories ? (
                 <ChevronUp className="h-4 w-4" />
@@ -188,7 +188,7 @@ export function FilterSidebar({
       <Separator />
 
       <Collapsible open={openSections.ratings} onOpenChange={() => toggleSection("ratings") }>
-        <CollapsibleTrigger className="flex w-full items-center justify-between py-1.5 text-sm font-medium">
+        <CollapsibleTrigger className="focus-ring flex w-full items-center justify-between py-1.5 text-sm font-medium">
           Customer ratings
           {openSections.ratings ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
         </CollapsibleTrigger>
@@ -201,7 +201,7 @@ export function FilterSidebar({
                   key={rating}
                   type="button"
                   onClick={() => handleRatingChange(rating)}
-                  className={`flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-left text-sm transition ${
+                  className={`focus-ring flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-left text-sm transition ${
                     selected ? "bg-primary/10 text-primary" : "hover:bg-muted"
                   }`}
                   data-testid={`button-rating-${rating}`}
